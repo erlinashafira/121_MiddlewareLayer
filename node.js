@@ -143,6 +143,39 @@ app.post(
     }
 )
 
+app.put(
+    '/biodata/:id',
+    validateParams(idSchema),
+    validateBody(biodataSchema.fork(
+        ['nama', 'nim', 'kelas'],
+        field => field.required()
+    ).fork(['id'], field => field.forbidden())),
+    async (req, res) => {
+        const { id } = req.params
+        const { nama, nim, kelas } = req.body
+
+        const result = await pool.query(
+            `UPDATE biodata
+             SET nama = $1, nim = $2, kelas = $3
+             WHERE id = $4
+             RETURNING *`,
+            [nama, nim, kelas, id]
+        )
+
+        if (result.rowCount === 0) {
+            return errorResponse(
+                res, 'Data tidak ditemukan', 404
+            )
+        }
+
+        return successResponse(
+            res,
+            'Data berhasil diupdate',
+            result.rows[0]
+        )
+    }
+)
+
 app.delete(
     '/biodata/:id',
     validateParams(idSchema),
@@ -160,11 +193,11 @@ app.delete(
             )
         }
 
-        return successResponse{
+        return successResponse(
             res,
             'Data berhasil dihapus',
             result.rows[0]
-        }
+        )
     }
 )
 
