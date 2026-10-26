@@ -1,6 +1,5 @@
 import express from 'express'
 import pg from 'pg'
-import joi from 'joi'
 import Joi from 'joi'
 
 const app = express()
@@ -75,7 +74,7 @@ function validateBody(schema) {
             return errorResponse(
                 res,
                 'Validasi input gagal',
-                408,
+                400,
                 error.details.map(item => ({
                     field: item.path.join('.'),
                     message: item.message,
@@ -108,3 +107,15 @@ function validateParams(schema){
         next()
     }
 }
+
+app.get('/', async (req, res) => {
+    const result = await pool.query(
+        'SELECT * FROM biodata ORDER BY id'
+    )
+
+    return successResponse(
+        res,
+        'Data berhasil diambil',
+        result.rows
+    )
+})
