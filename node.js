@@ -87,3 +87,7 @@ function validateBody(schema) {
         next()
     }
 }
+
+function validateParams(schema){
+    
+}
