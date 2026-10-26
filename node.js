@@ -212,7 +212,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
     console.error(err)
 
-    if (res.headerSent) {
+    if (res.headersSent) {
         return next(err)
     }
 
